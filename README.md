@@ -3,7 +3,7 @@ vagrant-skel-barebone
 
 My initial Vagrant skeleton provisioning with Ansible.
 
-* Based on [CentOS 7.0 minimal](https://vagrantcloud.com/matyunin/centos7) distributed under [Vagrant Cloud](https://vagrantcloud.com/)
+* Based on [japboy/CentOS-7.0-1406-x86_64-Minimal](https://vagrantcloud.com/japboy/CentOS-7.0-1406-x86_64-Minimal) distributed under [Vagrant Cloud](https://vagrantcloud.com/)
 
 Requirements
 ------------
