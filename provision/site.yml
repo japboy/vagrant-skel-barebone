@@ -1,13 +1,45 @@
 ---
 - hosts: default
   user: vagrant
+  sudo: true
 
   tasks:
-    - command: uname -a
-      register: system
 
-    - command: cat /etc/redhat-release
-      register: release
+    - name: EPEL repository installation
+      yum: name=http://dl.fedoraproject.org/pub/epel/beta/7/x86_64/epel-release-7-0.2.noarch.rpm state=present
 
-    - debug: msg="{{ system.stdout }}"
-    - debug: msg="{{ release.stdout }}"
+    - name: YUM package update
+      yum: name=* enablerepo=epel state=latest
+
+    - name: YUM package installation
+      yum: name={{ item }} enablerepo=epel state=latest
+      with_items:
+        - nodejs
+        - npm
+        - ruby
+        - rubygems
+
+    - name: RubyGems package installation
+      gem: name={{ item }} state=latest
+      with_items:
+        - bundler
+        - sass
+
+    - name: NPM package installation
+      npm: global=yes name={{ item }} state=latest
+      with_items:
+        - gulp
+
+    - name: Web Starter Kit bootstrapping
+      git: dest=/vagrant/proj repo=https://github.com/google/web-starter-kit.git
+      sudo: false
+
+    - name: Web Starter Kit NPM installation
+      npm: path=/vagrant/proj
+      sudo: false
+
+    - name: Web Starter Kit launch
+      command: bash -lc "cd /vagrant/proj && gulp serve"
+      async: 100000
+      poll: 0
+      sudo: false
