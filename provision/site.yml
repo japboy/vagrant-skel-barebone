@@ -39,7 +39,7 @@
       sudo: false
 
     - name: Web Starter Kit launch
-      command: bash -lc "cd /vagrant/proj && gulp serve"
-      async: 100000
+      shell: chdir=/vagrant/proj gulp serve
+      async: 1000
       poll: 0
       sudo: false
