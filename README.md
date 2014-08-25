@@ -33,6 +33,10 @@ cd /path/to/proj
 vagrant up
 ```
 
+Then access the URL below:
+
+[http://192.168.33.10/](http://192.168.33.10/)
+
 References
 ----------
 
