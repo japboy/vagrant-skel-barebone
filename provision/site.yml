@@ -1,13 +1,70 @@
 ---
 - hosts: default
   user: vagrant
+  sudo: true
 
   tasks:
-    - command: uname -a
-      register: system
 
-    - command: cat /etc/redhat-release
-      register: release
+    - name: EPEL repository installation
+      yum: name=http://dl.fedoraproject.org/pub/epel/beta/7/x86_64/epel-release-7-0.2.noarch.rpm state=present
 
-    - debug: msg="{{ system.stdout }}"
-    - debug: msg="{{ release.stdout }}"
+    - name: Jenkins repository installation
+      get_url: dest=/etc/yum.repos.d/jenkins.repo url=http://pkg.jenkins-ci.org/redhat/jenkins.repo
+
+    - name: Jenkins repository key installation
+      rpm_key: key=http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key state=present
+
+    - name: YUM package update
+      yum: name=* enablerepo=epel state=latest
+
+    - name: YUM package installation
+      yum: name={{ item }} enablerepo=epel state=latest
+      with_items:
+        - git
+        - java-1.7.0-openjdk
+        - jenkins
+        - nodejs
+        - npm
+        - php
+        - python
+        - ruby
+        - rubygems
+      notify:
+        - firewalld restarted
+
+    - name: RubyGems package installation
+      gem: name={{ item }} state=latest
+      with_items:
+        - bundler
+        - foreman
+
+    - name: NPM package installation
+      npm: global=yes name={{ item }} state=latest
+      with_items:
+        - bower
+        - coffee-script
+        - grunt-cli
+
+    - name: Firewall configuration
+      shell: firewall-cmd {{ item }}
+      with_items:
+        - --set-default-zone=public
+        - --zone=public --add-masquerade --permanent
+        - --zone=public --add-forward-port=port=443:proto=tcp:toport=8080 --permanent
+        - --reload
+
+    - name: Jenkins configuration
+      lineinfile: dest=/etc/sysconfig/jenkins regexp='{{ item.re }}' line='{{ item.str }}'
+      with_items:
+        - { re: ^JENKINS_PORT="8080"$, str: JENKINS_PORT="-1" }
+        - { re: ^JENKINS_HTTPS_PORT=""$, str: JENKINS_HTTPS_PORT="8080" }
+      notify:
+        - jenkins restarted
+
+  handlers:
+
+    - name: firewalld restarted
+      service: enabled=yes name=firewalld state=restarted
+
+    - name: jenkins restarted
+      service: enabled=yes name=jenkins state=restarted
