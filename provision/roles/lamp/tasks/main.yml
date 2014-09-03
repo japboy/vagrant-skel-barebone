@@ -1,0 +1,14 @@
+---
+
+- name: YUM package installation
+  yum: name={{ item }} enablerepo=epel state=latest
+  with_items: yums
+
+- name: Apache configuration update
+  lineinfile: dest=/etc/httpd/conf/httpd.conf regexp='{{ item.re }}' line='{{ item.str }}'
+  with_items:
+    - { re: ^DocumentRoot "/var/www/html"$, str: DocumentRoot "/vagrant/www/html" }
+    - { re: ^<Directory "/var/www/html">$, str: <Directory "/vagrant/www/html"> }
+  notify:
+    - httpd restarted
+    - mysqld restarted

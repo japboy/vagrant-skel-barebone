@@ -1,4 +1,4 @@
 ---
 
 - include: ./centos.yml
-- include: ./debug.yml
+#- include: ./debug.yml

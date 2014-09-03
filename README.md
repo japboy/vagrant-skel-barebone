@@ -83,6 +83,10 @@ With a physical server:
 vagrant up --provider=managed
 ```
 
+Access the LAMP environment under `./public/www/html` through a web browser:
+
+http://192.168.33.10/
+
 References
 ----------
 
