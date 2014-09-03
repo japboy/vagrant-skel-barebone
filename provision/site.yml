@@ -1,13 +1,7 @@
 ---
+
 - hosts: default
-  user: vagrant
+  user: "{{ user }}"
 
-  tasks:
-    - command: uname -a
-      register: system
-
-    - command: cat /etc/redhat-release
-      register: release
-
-    - debug: msg="{{ system.stdout }}"
-    - debug: msg="{{ release.stdout }}"
+  roles:
+    - common
