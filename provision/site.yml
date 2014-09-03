@@ -1,41 +1,7 @@
 ---
+
 - hosts: default
-  user: vagrant
-  sudo: true
+  user: "{{ user }}"
 
-  tasks:
-
-    - name: EPEL repository installation
-      yum: name=http://dl.fedoraproject.org/pub/epel/beta/7/x86_64/epel-release-7-0.2.noarch.rpm state=present
-
-    - name: YUM package update
-      yum: name=* enablerepo=epel state=latest
-
-    - name: YUM package installation
-      yum: name={{ item }} enablerepo=epel state=latest
-      with_items:
-        - httpd
-        - mysql-server
-        - php
-        - php-common
-        - php-gd
-        - php-mysql
-        - php-pear
-        - php-xml
-
-    - name: Apache configuration update
-      lineinfile: dest=/etc/httpd/conf/httpd.conf regexp='{{ item.re }}' line='{{ item.str }}'
-      with_items:
-        - { re: ^DocumentRoot "/var/www/html"$, str: DocumentRoot "/vagrant/www/html" }
-        - { re: ^<Directory "/var/www/html">$, str: <Directory "/vagrant/www/html"> }
-      notify:
-        - httpd restarted
-        - mysqld restarted
-
-  handlers:
-
-    - name: httpd restarted
-      service: name=httpd enabled=yes state=restarted
-
-    - name: mysqld restarted
-      service: name=mysqld enabled=yes state=restarted
+  roles:
+    - common

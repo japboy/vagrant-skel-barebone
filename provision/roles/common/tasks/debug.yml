@@ -1,0 +1,20 @@
+---
+
+- command: uname -a
+  register: uname
+
+- command: cat /etc/debian_version
+  ignore_errors: true
+  register: debian
+
+- command: cat /etc/redhat-release
+  ignore_errors: true
+  register: redhat
+
+- debug: msg="{{ uname.stdout }}"
+
+- debug: msg="{{ debian.stdout }}"
+  when: debian | success
+
+- debug: msg="{{ redhat.stdout }}"
+  when: redhat | success
