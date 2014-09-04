@@ -1,7 +1,0 @@
----
-
-- name: EPEL repository installation
-  yum: name={{ epel }} state=present
-
-- name: YUM package update
-  yum: name=* enablerepo=epel state=latest
