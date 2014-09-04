@@ -6,6 +6,10 @@
 
   vars:
     - epel: http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-1.noarch.rpm
+    - fwRules:
+      - "--set-default-zone=public"
+      - "--permanent --zone=public --add-service=ssh"
+      - "--reload"
     - yums:
       - httpd
       - mysql-server
