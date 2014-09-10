@@ -1,0 +1,15 @@
+---
+
+- name: YUM package installation
+  yum: name={{ item }} enablerepo=epel state=latest
+  with_items: yums
+
+- name: GitBucket download
+  get_url: dest="/vagrant/gitbucket.war" url="https://github.com/takezoe/gitbucket/releases/download/2.3/gitbucket.war"
+  sudo: false
+
+- name: GitBucket launch
+  shell: chdir="/vagrant" java -jar ./gitbucket.war --port=8080 --gitbucket.home=/vagrant/.gitbucket
+  async: 86400
+  poll: 0
+  sudo: false

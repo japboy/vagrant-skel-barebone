@@ -83,6 +83,10 @@ With a physical server:
 vagrant up --provider=managed
 ```
 
+Access the GitBucket environment under `./public/.gitbucket` through a web browser:
+
+http://192.168.33.10/
+
 References
 ----------
 

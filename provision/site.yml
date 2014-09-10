@@ -8,8 +8,13 @@
     - epel: http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-1.noarch.rpm
     - fwRules:
       - "--set-default-zone=public"
-      - "--permanent --zone=public --add-service=ssh"
+      - "--permanent --add-masquerade"
+      - "--permanent --zone=public --add-forward-port=port=80:proto=tcp:toport=8080"
       - "--reload"
+    - yums:
+      - git
+      - java-1.7.0-openjdk
 
   roles:
     - common
+    - gitbucket
