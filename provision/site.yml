@@ -9,6 +9,9 @@
     - fwRules:
       - "--set-default-zone=public"
       - "--permanent --zone=public --add-service=ssh"
+      - "--permanent --zone=public --add-service=http"
+      - "--permanent --zone=public --add-service=https"
+      - "--permanent --zone=public --add-service=mysql"
       - "--reload"
     - yums:
       - httpd

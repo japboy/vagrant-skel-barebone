@@ -5,10 +5,9 @@
   with_items: yums
 
 - name: Apache configuration update
-  lineinfile: dest=/etc/httpd/conf/httpd.conf regexp='{{ item.re }}' line='{{ item.str }}'
-  with_items:
-    - { re: ^DocumentRoot "/var/www/html"$, str: DocumentRoot "/vagrant/www/html" }
-    - { re: ^<Directory "/var/www/html">$, str: <Directory "/vagrant/www/html"> }
+  lineinfile: dest="/etc/httpd/conf/httpd.conf" line="Include /etc/httpd/conf/my.conf"
+
+- name: Apache configuration adding
+  copy: dest="/etc/httpd/conf/my.conf" src="my.conf"
   notify:
     - httpd restarted
-    - mysqld restarted
