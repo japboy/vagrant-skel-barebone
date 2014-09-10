@@ -1,0 +1,4 @@
+---
+
+- include: ./fedora.yml
+- include: ./debug.yml

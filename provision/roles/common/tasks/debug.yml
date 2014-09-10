@@ -1,0 +1,34 @@
+---
+
+- command: uname -a
+  register: uname
+
+- debug: var=uname.stdout
+
+- command: cat /etc/debian_version
+  ignore_errors: true
+  register: debian
+
+- debug: var=debian.stdout
+  when: debian | success
+
+- command: cat /etc/fedora-release
+  ignore_errors: true
+  register: fedora
+
+- debug: var=fedora.stdout
+  when: fedora | success
+
+- command: cat /etc/redhat-release
+  ignore_errors: true
+  register: redhat
+
+- debug: var=redhat.stdout
+  when: redhat | success
+
+- command: firewall-cmd --zone=public --list-all
+  ignore_errors: true
+  register: firewallCmd
+
+- debug: var=firewallCmd.stdout_lines
+  when: firewallCmd | success

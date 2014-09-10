@@ -45,18 +45,90 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
-  # Example for VirtualBox:
-  #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Don't boot with headless mode
-  #   vb.gui = true
-  #
-  #   # Use VBoxManage to customize the VM. For example to change memory:
-  #   vb.customize ["modifyvm", :id, "--memory", "1024"]
-  # end
   #
   # View the documentation for the provider you're using for more
   # information on available options.
+  #
+  # Amazon Web Services
+  # https://github.com/mitchellh/vagrant-aws#configuration
+  #
+  config.vm.provider :aws do |provider, override|
+    provider.access_key_id = ENV['AWS_ACCESS_KEY']
+    provider.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+    provider.use_iam_profile = true
+
+    provider.ami = "ami-29dc9228"
+    provider.instance_type = "t2.micro"
+    provider.keypair_name = ENV['AWS_KEYPAIR_NAME']
+    provider.region = "ap-northeast-1"
+
+    provider.security_groups = [
+      "default"
+    ]
+    provider.tags = {
+      "Name" => "Testing"
+    }
+
+    override.vm.box = "aws"
+    override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
+
+    override.ssh.pty = true
+    override.ssh.username = "ec2-user"
+    override.ssh.private_key_path = ENV['AWS_PRIVATE_KEY_PATH']
+  end
+
+  # Google Compute Engine
+  # https://github.com/mitchellh/vagrant-google#configuration
+  #
+  config.vm.provider :google do |provider, override|
+    provider.google_project_id = ENV['GCE_PROJECT_ID']
+    provider.google_client_email = ENV['GCE_CLIENT_EMAIL']
+    provider.google_key_location = ENV['GCE_KEY_LOCATION']
+
+    provider.image = "centos-6-v20140619"
+    provider.machine_type = "f1-micro"
+
+    provider.name = "my-instance"
+    provider.network = "vagrant"
+
+    override.vm.box = "gce"
+    override.vm.box_url = "https://github.com/mitchellh/vagrant-google/raw/master/google.box"
+
+    override.ssh.username = ENV['USERNAME']
+    override.ssh.private_key_path = ENV['GCE_PRIVATE_KEY_PATH']
+  end
+
+  # DigitalOcean
+  # https://github.com/smdahlen/vagrant-digitalocean#configure
+  #
+  config.vm.provider :digital_ocean do |provider, override|
+    provider.token = ENV['DO_TOKEN']
+    provider.image = "CentOS 7.0 x64"
+    provider.size = "512mb"
+    provider.ssh_key_name = ENV['DO_SSH_KEY_NAME']
+    provider.region = "sfo1"
+
+    override.vm.box = "digitalocean"
+    override.vm.box_url = "https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box"
+
+    override.ssh.pty = true
+    override.ssh.username = ENV['USERNAME']
+    override.ssh.private_key_path = ENV['DO_PRIVATE_KEY_PATH']
+  end
+
+  # Physical server
+  # https://github.com/tknerr/vagrant-managed-servers#configuration
+  #
+  config.vm.provider :managed do |provider, override|
+    provider.server = ENV['HOSTNAME']
+
+    override.vm.box = "managed"
+    override.vm.box_url = "https://github.com/tknerr/vagrant-managed-servers/raw/master/dummy.box"
+
+    override.ssh.username = ENV['USERNAME']
+    #override.ssh.password = ENV['PASSWORD']
+    override.ssh.private_key_path = ENV['PRIVATE_KEY_PATH']
+  end
 
   # Enable provisioning with ansible, specifying a playbook path. Ansible's
   # inventory file will be created automatically when `vagrant up`, and it
@@ -65,5 +137,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "./provision/site.yml"
+    ansible.extra_vars = {
+      user: ENV['USERNAME'],
+    }
   end
 end
